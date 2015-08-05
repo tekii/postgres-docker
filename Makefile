@@ -1,18 +1,21 @@
 ##
 ## REFINE
 ##
+DISTRO:=wheezy
 PG_MAJOR:=9
-PG_MINOR:=1
-PG_DATA:=/var/lib/postgresql/$(PG_MAJOR).$(PG_MINOR)
+PG_MINOR:=3
+PG_DATA:=/var/lib/postgresql/$(PG_MAJOR).$(PG_MINOR)/main
 PG_HOME:=/var/lib/postgresql
 PG_PORT:=5432
 DOCKER_TAG:=tekii/postgres:$(PG_MAJOR).$(PG_MINOR)
+
 
 ##
 ## M4
 ##
 M4= $(shell which m4)
 M4_FLAGS= -P \
+	-D __DISTRO__=$(DISTRO) \
 	-D __PG_MAJOR__=$(PG_MAJOR) \
 	-D __PG_MINOR__=$(PG_MINOR) \
 	-D __PG_DATA__=$(PG_DATA) \
@@ -31,11 +34,11 @@ update-patch:
 
 PHONY += image
 image: Dockerfile #$(POSTGRES_ROOT)
-	docker build -t $(DOCKER_TAG) .
+	docker build --no-cache=false --rm=true --tag=$(DOCKER_TAG) .
 
 PHONY+= run
 run: #image
-	docker run -it -p $(PG_PORT):$(PG_PORT) -v $(shell pwd)/volume:$(PG_HOME) $(DOCKER_TAG) /bin/bash
+	docker run --rm -it -p $(PG_PORT):$(PG_PORT) -v $(shell pwd)/volume:$(PG_HOME) $(DOCKER_TAG) /bin/bash
 
 PHONY+= push-to-docker
 push-to-docker: image
