@@ -22,13 +22,13 @@ RUN echo "deb http://gce_debian_mirror.storage.googleapis.com __DISTRO__-backpor
     rm -rf /var/lib/apt/lists/* && \
     localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 
+# don't confuse PG_DATA with PGDATA
 ENV PG_MAJOR=__PG_MAJOR__ \
     PG_MINOR=__PG_MINOR__ \
     PG_PORT=__PG_PORT__ \
+    PG_DATA=__PG_DATA__ \
     LANG=en_US.utf8 \
     PATH=$PATH:/usr/lib/postgresql/__PG_MAJOR__.__PG_MINOR__/bin
-
-#PGDATA=__PG_DATA__ \
 
 RUN groupadd --system --gid 2000 --key PASS_MAX_DAYS=-1 postgres && \
     useradd --system --gid 2000 --key PASS_MAX_DAYS=-1 --uid 2000 \
@@ -41,18 +41,15 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends postgresql-__PG_MAJOR__.__PG_MINOR__ && \
     rm -rf /var/lib/apt/lists/*
 
-#COPY *.conf /etc/postgresql/__PG_MAJOR__.__PG_MINOR__/main/
+COPY docker-entrypoint.sh /opt/
 
-#RUN chown postgres.postgres /etc/postgresql/__PG_MAJOR__.__PG_MINOR__/main/postgresql.conf && \
-#    chown postgres.postgres /etc/postgresql/__PG_MAJOR__.__PG_MINOR__/main/pg_hba.conf 
+RUN chmod 755 /opt/docker-entrypoint.sh
 
 VOLUME __PG_HOME__
 EXPOSE __PG_PORT__
 
 USER postgres 
 
-#RUN initdb --username=postgres --pgdata=__PG_DATA__ 
+ENTRYPOINT ["/opt/docker-entrypoint.sh"]
 
-
-#ENTRYPOINT ["/usr/lib/postgresql/__PG_MAJOR__.__PG_MINOR__/bin/postgres", "--config-file=/etc/postgresql/__PG_MAJOR__.__PG_MINOR__/main/postgresql.conf"]
     
