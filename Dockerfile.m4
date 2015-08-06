@@ -6,8 +6,9 @@ FROM google/debian:__DISTRO__
 MAINTAINER Pablo Jorge Eduardo Rodriguez <pr@tekii.com.ar>
 
 LABEL version="__PG_MAJOR__.__PG_MINOR__"
-#http://gce_debian_mirror.storage.googleapis.com
+# http://gce_debian_mirror.storage.googleapis.com
 # http://http.debian.net/debian
+#
 # from https://github.com/docker-library/postgres -> make the
 # "en_US.UTF-8" locale so postgres will be utf-8 enabled by default
 RUN echo "deb http://gce_debian_mirror.storage.googleapis.com __DISTRO__-backports main" \
@@ -22,11 +23,12 @@ RUN echo "deb http://gce_debian_mirror.storage.googleapis.com __DISTRO__-backpor
     rm -rf /var/lib/apt/lists/* && \
     localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 
-# don't confuse PG_DATA with PGDATA
+# PG_DATA is not PGDATA
 ENV PG_MAJOR=__PG_MAJOR__ \
     PG_MINOR=__PG_MINOR__ \
     PG_PORT=__PG_PORT__ \
     PG_DATA=__PG_DATA__ \
+    HOME=__PG_HOME__ \
     LANG=en_US.utf8 \
     PATH=$PATH:/usr/lib/postgresql/__PG_MAJOR__.__PG_MINOR__/bin
 
