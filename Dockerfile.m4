@@ -29,6 +29,7 @@ ENV PG_MAJOR=__PG_MAJOR__ \
     PG_PORT=__PG_PORT__ \
     PG_DATA=__PG_DATA__ \
     HOME=__PG_HOME__ \
+    SECRETS=__SECRETS__ \
     LANG=en_US.utf8 \
     PATH=$PATH:/usr/lib/postgresql/__PG_MAJOR__.__PG_MINOR__/bin
 
@@ -36,6 +37,11 @@ RUN groupadd --system --gid 2000 --key PASS_MAX_DAYS=-1 postgres && \
     useradd --system --gid 2000 --key PASS_MAX_DAYS=-1 --uid 2000 \
             --home-dir __PG_HOME__ \
             --shell /bin/bash --comment "Account for running postgres" postgres
+
+RUN mkdir -p __PG_HOME__ && \
+    chown -R postgres.postgres __PG_HOME__ && \
+    mkdir -p __SECRETS__ && \
+    chown -R postgres.postgres __SECRETS__
 # 
 RUN apt-get update && \
     apt-get install --assume-yes --no-install-recommends postgresql-common && \
@@ -43,10 +49,16 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends postgresql-__PG_MAJOR__.__PG_MINOR__ && \
     rm -rf /var/lib/apt/lists/*
 
-COPY docker-entrypoint.sh /opt/
+RUN mkdir -p __SECRETS__ 
 
-RUN chmod 755 /opt/docker-entrypoint.sh
+COPY docker-entrypoint.sh /opt/ 
+COPY credentials __SECRETS__/
 
+RUN chmod 755 /opt/docker-entrypoint.sh && \
+    chown -R postgres.postgres __SECRETS__ && \
+    chmod -R 500 __SECRETS__
+
+VOLUME __SECRETS__
 VOLUME __PG_HOME__
 EXPOSE __PG_PORT__
 

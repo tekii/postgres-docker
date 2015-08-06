@@ -7,6 +7,7 @@ PG_MINOR:=3
 PG_DATA:=/var/lib/postgresql/$(PG_MAJOR).$(PG_MINOR)/main
 PG_HOME:=/var/lib/postgresql
 PG_PORT:=5432
+SECRETS:=/run/secrets
 DOCKER_TAG:=tekii/postgres:$(PG_MAJOR).$(PG_MINOR)
 
 
@@ -21,6 +22,7 @@ M4_FLAGS= -P \
 	-D __PG_DATA__=$(PG_DATA) \
 	-D __PG_HOME__=$(PG_HOME) \
 	-D __PG_PORT__=$(PG_PORT) \
+	-D __SECRETS__=$(SECRETS) \
 	-D __DOCKER_TAG__=$(DOCKER_TAG)
 
 #.SECONDARY
