@@ -1,5 +1,5 @@
 ##
-## REFINE
+## POSTGRES
 ##
 DISTRO:=wheezy
 PG_MAJOR:=9
