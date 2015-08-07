@@ -48,8 +48,8 @@ push-to-docker: image
 
 PHONY += push-to-google
 push-to-google: image
-	docker tag $(DOCKER_TAG) gcr.io/test-teky/postgres:$(PG_MAJOR).$(PG_MINOR)
-	gcloud docker push gcr.io/test-teky/postgres:$(PG_MAJOR).$(PG_MINOR)
+	docker tag $(DOCKER_TAG) gcr.io/mrg-teky/postgres:$(PG_MAJOR).$(PG_MINOR)
+	gcloud docker push gcr.io/mrg-teky/postgres:$(PG_MAJOR).$(PG_MINOR)
 
 PHONY += clean
 clean:

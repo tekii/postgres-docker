@@ -36,12 +36,9 @@ ENV PG_MAJOR=__PG_MAJOR__ \
 RUN groupadd --system --gid 2000 --key PASS_MAX_DAYS=-1 postgres && \
     useradd --system --gid 2000 --key PASS_MAX_DAYS=-1 --uid 2000 \
             --home-dir __PG_HOME__ \
-            --shell /bin/bash --comment "Account for running postgres" postgres
-
-RUN mkdir -p __PG_HOME__ && \
-    chown -R postgres.postgres __PG_HOME__ && \
-    mkdir -p __SECRETS__ && \
-    chown -R postgres.postgres __SECRETS__
+            --shell /bin/bash --comment "Account for running postgres" postgres  && \
+    mkdir -p __PG_HOME__ && \
+    chown -R postgres.postgres __PG_HOME__  
 # 
 RUN apt-get update && \
     apt-get install --assume-yes --no-install-recommends postgresql-common && \
@@ -49,21 +46,28 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends postgresql-__PG_MAJOR__.__PG_MINOR__ && \
     rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p __SECRETS__ 
+# Mock Kubernetes secret
+RUN mkdir -p __SECRETS__ && \
+    chown -R postgres.postgres __SECRETS__
+    
+COPY username __SECRETS__/
+COPY password __SECRETS__/
+COPY database __SECRETS__/
 
 COPY docker-entrypoint.sh /opt/ 
-COPY credentials __SECRETS__/
 
-RUN chmod 755 /opt/docker-entrypoint.sh && \
+RUN chmod 555 /opt/docker-entrypoint.sh && \
     chown -R postgres.postgres __SECRETS__ && \
-    chmod -R 500 __SECRETS__
+    chmod 500 __SECRETS__ && \
+    chmod -R 400 __SECRETS__/*
 
-VOLUME __SECRETS__
+# Kubernetes secret place-holder
+#VOLUME __SECRETS__
+# Kubernetes volume place-holder
 VOLUME __PG_HOME__
+
 EXPOSE __PG_PORT__
 
 USER postgres 
 
 ENTRYPOINT ["/opt/docker-entrypoint.sh"]
-
-    
