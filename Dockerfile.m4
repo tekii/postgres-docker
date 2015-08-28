@@ -47,23 +47,24 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Mock Kubernetes secret
-RUN mkdir -p __SECRETS__ && \
-    chown -R postgres.postgres __SECRETS__
+#RUN mkdir -p __SECRETS__ && \
+#    chown -R postgres.postgres __SECRETS__
     
-COPY username __SECRETS__/
-COPY password __SECRETS__/
-COPY database __SECRETS__/
+#COPY username __SECRETS__/
+#COPY password __SECRETS__/
+#COPY database __SECRETS__/
 
 COPY docker-entrypoint.sh /opt/ 
 
-RUN chmod 555 /opt/docker-entrypoint.sh && \
-    chown -R postgres.postgres __SECRETS__ && \
-    chmod 500 __SECRETS__ && \
-    chmod -R 400 __SECRETS__/*
+RUN chmod 555 /opt/docker-entrypoint.sh 
+
+#    chown -R postgres.postgres __SECRETS__ && \
+#    chmod 500 __SECRETS__ && \
+#    chmod -R 400 __SECRETS__/*
 
 # Kubernetes secret place-holder
-#VOLUME __SECRETS__
-# Kubernetes volume place-holder
+VOLUME __SECRETS__
+# Postgres data volume place-holder
 VOLUME __PG_HOME__
 
 EXPOSE __PG_PORT__

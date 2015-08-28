@@ -22,21 +22,26 @@ if [ ! -d "${PG_DATA}" ]; then
         ${PG_DATA}/postgresql.conf 
     echo "host all all 0.0.0.0/0 md5" >> ${PG_DATA}/pg_hba.conf
 
-    # checks for database initialization scripts in the persistent
-    # volume.
-    if [ -d ${HOME}/db.d ]; then
+    if [ -f ${SECRETS}/username ] && [ -f ${SECRETS}/password ] &&  [ -f ${SECRETS}/database ]; then
         # start server to run init scripts
         ${POSTGRESQL} -D ${PG_DATA} &
         pid="$!"
         echo "ENTRYPOINT: postgres starts with ${pid}."
         # TODO: review this
         sleep 3
-        
-        for file in ${HOME}/db.d/*.sh; do
-            echo "ENTRYPOINT: running local init script ${file}."
-            source ${file}; # pass secrets here
-        done
-   
+        #
+        DB_DATABASE=$(<${SECRETS}/database)
+        DB_USERNAME=$(<${SECRETS}/username)
+        DB_PASSWORD=$(<${SECRETS}/password)
+
+        echo "ENTRYPOINT: about to create database:${DB_DATABASE} username:${DB_USERNAME}"
+        #echo "ENTRYPOINT: ${DB_PASSWORD}"
+
+        PSQL_FLAGS="--no-psqlrc --quiet"
+
+        psql ${PSQL_FLAGS} --command="CREATE ROLE ${DB_USERNAME} PASSWORD '${DB_PASSWORD}' NOSUPERUSER NOCREATEDB NOCREATEROLE INHERIT LOGIN;"
+        psql ${PSQL_FLAGS} --command="CREATE DATABASE ${DB_DATABASE} WITH OWNER ${DB_USERNAME} ENCODING 'UNICODE' LC_COLLATE 'C' LC_CTYPE 'C' TEMPLATE template0;"
+
         echo "ENTRYPOINT: stoping ${pid}."
         #
         if ! kill -s TERM "${pid}" || ! wait "${pid}"; then
@@ -44,6 +49,9 @@ if [ ! -d "${PG_DATA}" ]; then
 	    exit 1
         fi
         echo "ENTRYPOINT: ${pid} stoped."
+    else
+        echo "ENTRYPOINT: some secrets are missing."
+        exit 1
     fi
 fi
 
