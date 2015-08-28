@@ -23,7 +23,7 @@ if [ -f ${SECRETS}/username ] && [ -f ${SECRETS}/password ] && [ -f ${SECRETS}/d
     #createdb --owner ${DB_USERNAME} -E UNICODE -l C -T template0 jiradb
 
 else
-    echo "ENTRYPOINT: some secret is missing."
+    echo "ENTRYPOINT: some secrets are missing."
     exit 1
 fi
 

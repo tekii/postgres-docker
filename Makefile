@@ -40,7 +40,7 @@ image: Dockerfile #$(POSTGRES_ROOT)
 
 PHONY+= run
 run: #image
-	docker run --rm -it -p $(PG_PORT):$(PG_PORT) -v $(shell pwd)/volume:$(PG_HOME) $(DOCKER_TAG) /bin/bash
+	docker run --rm -it -p $(PG_PORT):$(PG_PORT) -v $(shell pwd)/volume:$(PG_HOME) -v $(shell pwd)/secrets:$(SECRETS) $(DOCKER_TAG) /bin/bash
 
 PHONY+= push-to-docker
 push-to-docker: image
