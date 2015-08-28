@@ -8,7 +8,7 @@ if [ -f ${SECRETS}/username ] && [ -f ${SECRETS}/password ] && [ -f ${SECRETS}/d
     DB_DATABASE=$(<${SECRETS}/database)
     # 
     echo "ENTRYPOINT: ${DB_USERNAME}"
-    echo "ENTRYPOINT: ${DB_PASSWORD}"
+    #echo "ENTRYPOINT: ${DB_PASSWORD}"
     echo "ENTRYPOINT: ${DB_DATABASE}"
 
     PSQL_FLAGS="--no-psqlrc --quiet"
