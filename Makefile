@@ -51,9 +51,19 @@ push-to-google: image
 	docker tag $(DOCKER_TAG) gcr.io/mrg-teky/postgres:$(PG_MAJOR).$(PG_MINOR)
 	gcloud docker push gcr.io/mrg-teky/postgres:$(PG_MAJOR).$(PG_MINOR)
 
+PHONY += git-tag git-push
+git-tag:
+	-git tag -d $(PG_MAJOR).$(PG_MINOR)
+	git tag $(PG_MAJOR).$(PG_MINOR)
+
+git-push:
+	-git push origin :refs/tags/$(PG_MAJOR).$(PG_MINOR)
+	git push origin
+	git push --tags origin
+
 PHONY += clean
 clean:
-	rm -f Dokerfile	
+	rm -f Dokerfile
 
 PHONY += realclean
 realclean: clean
