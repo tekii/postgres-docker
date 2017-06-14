@@ -1,7 +1,7 @@
 #
 # postgres Dockerfile
-# 
-FROM google/debian:wheezy
+#
+FROM launcher.gcr.io/google/debian8:latest
 
 MAINTAINER Pablo Jorge Eduardo Rodriguez <pr@tekii.com.ar>
 
@@ -11,15 +11,15 @@ LABEL version="9.3"
 #
 # from https://github.com/docker-library/postgres -> make the
 # "en_US.UTF-8" locale so postgres will be utf-8 enabled by default
-RUN echo "deb http://gce_debian_mirror.storage.googleapis.com wheezy-backports main" \
+RUN echo "deb http://gce_debian_mirror.storage.googleapis.com jessie-backports main" \
     >  /etc/apt/sources.list.d/backports.list && \
-    echo "deb http://apt.postgresql.org/pub/repos/apt/ wheezy-pgdg main" \
+    echo "deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main" \
     > /etc/apt/sources.list.d/pgdg.list && \
     apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 \
     --recv-keys B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8 && \
     apt-get update && \
     apt-get dist-upgrade --assume-yes && \
-    apt-get --target-release wheezy-backports install -y --no-install-recommends locales && \
+    apt-get --target-release jessie-backports install -y --no-install-recommends locales && \
     rm -rf /var/lib/apt/lists/* && \
     localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 
@@ -38,8 +38,8 @@ RUN groupadd --system --gid 2000 --key PASS_MAX_DAYS=-1 postgres && \
             --home-dir /var/lib/postgresql \
             --shell /bin/bash --comment "Account for running postgres" postgres  && \
     mkdir -p /var/lib/postgresql && \
-    chown -R postgres.postgres /var/lib/postgresql  
-# 
+    chown -R postgres.postgres /var/lib/postgresql
+#
 RUN apt-get update && \
     apt-get install --assume-yes --no-install-recommends postgresql-common && \
     sed -ri 's/#(create_main_cluster) .*$/\1 = false/' /etc/postgresql-common/createcluster.conf && \
@@ -49,14 +49,14 @@ RUN apt-get update && \
 # Mock Kubernetes secret
 #RUN mkdir -p __SECRETS__ && \
 #    chown -R postgres.postgres __SECRETS__
-    
+
 #COPY username __SECRETS__/
 #COPY password __SECRETS__/
 #COPY database __SECRETS__/
 
-COPY docker-entrypoint.sh /opt/ 
+COPY docker-entrypoint.sh /opt/
 
-RUN chmod 555 /opt/docker-entrypoint.sh 
+RUN chmod 555 /opt/docker-entrypoint.sh
 
 #    chown -R postgres.postgres __SECRETS__ && \
 #    chmod 500 __SECRETS__ && \
@@ -69,6 +69,6 @@ VOLUME /var/lib/postgresql
 
 EXPOSE 5432
 
-USER postgres 
+USER postgres
 
 ENTRYPOINT ["/opt/docker-entrypoint.sh"]

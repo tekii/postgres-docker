@@ -1,7 +1,7 @@
 #
 # postgres Dockerfile
-# 
-FROM google/debian:__DISTRO__
+#
+FROM launcher.gcr.io/google/debian8:latest
 
 MAINTAINER Pablo Jorge Eduardo Rodriguez <pr@tekii.com.ar>
 
@@ -38,8 +38,8 @@ RUN groupadd --system --gid 2000 --key PASS_MAX_DAYS=-1 postgres && \
             --home-dir __PG_HOME__ \
             --shell /bin/bash --comment "Account for running postgres" postgres  && \
     mkdir -p __PG_HOME__ && \
-    chown -R postgres.postgres __PG_HOME__  
-# 
+    chown -R postgres.postgres __PG_HOME__
+#
 RUN apt-get update && \
     apt-get install --assume-yes --no-install-recommends postgresql-common && \
     sed -ri 's/#(create_main_cluster) .*$/\1 = false/' /etc/postgresql-common/createcluster.conf && \
@@ -49,14 +49,14 @@ RUN apt-get update && \
 # Mock Kubernetes secret
 #RUN mkdir -p __SECRETS__ && \
 #    chown -R postgres.postgres __SECRETS__
-    
+
 #COPY username __SECRETS__/
 #COPY password __SECRETS__/
 #COPY database __SECRETS__/
 
-COPY docker-entrypoint.sh /opt/ 
+COPY docker-entrypoint.sh /opt/
 
-RUN chmod 555 /opt/docker-entrypoint.sh 
+RUN chmod 555 /opt/docker-entrypoint.sh
 
 #    chown -R postgres.postgres __SECRETS__ && \
 #    chmod 500 __SECRETS__ && \
@@ -69,6 +69,6 @@ VOLUME __PG_HOME__
 
 EXPOSE __PG_PORT__
 
-USER postgres 
+USER postgres
 
 ENTRYPOINT ["/opt/docker-entrypoint.sh"]

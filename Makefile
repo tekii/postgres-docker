@@ -1,7 +1,7 @@
 ##
 ## POSTGRES
 ##
-DISTRO:=wheezy
+DISTRO:=jessie
 PG_MAJOR:=9
 PG_MINOR:=3
 PG_DATA:=/var/lib/postgresql/$(PG_MAJOR).$(PG_MINOR)/main
