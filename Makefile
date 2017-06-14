@@ -29,6 +29,8 @@ M4_FLAGS= -P \
 Dockerfile: Dockerfile.m4 Makefile
 	$(M4) $(M4_FLAGS) $< >$@
 
+cloudbuild.yaml: m4/cloudbuild.yaml Makefile
+	$(M4) $(M4_FLAGS) $< >$@
 
 PHONY += update-patch
 update-patch:
@@ -37,6 +39,8 @@ update-patch:
 PHONY += image
 image: Dockerfile #$(POSTGRES_ROOT)
 	docker build --no-cache=false --rm=true --tag=$(DOCKER_TAG) .
+
+
 
 PHONY+= run
 run: #image

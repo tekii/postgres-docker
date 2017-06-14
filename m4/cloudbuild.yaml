@@ -1,0 +1,5 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '--no-cache', '-t', 'gcr.io/$PROJECT_ID/postgres:__PG_MAJOR__.__PG_MINOR__', '.']
+
+images: ['gcr.io/$PROJECT_ID/postgres']
