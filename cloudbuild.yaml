@@ -1,5 +1,10 @@
 steps:
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '--no-cache', '-t', 'gcr.io/$PROJECT_ID/postgres:9.3', '.']
+  args: ['build', '--no-cache', '-t', 'gcr.io/$PROJECT_ID/postgres', '.']
+  id: A
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['tag', 'gcr.io/$PROJECT_ID/postgres','gcr.io/$PROJECT_ID/postgres:9.3' ]
+  waitFor:
+  - A
 
 images: ['gcr.io/$PROJECT_ID/postgres:9.3']

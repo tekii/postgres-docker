@@ -1,5 +1,10 @@
 steps:
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '--no-cache', '-t', 'gcr.io/$PROJECT_ID/postgres:__PG_MAJOR__.__PG_MINOR__', '.']
+  args: ['build', '--no-cache', '-t', 'gcr.io/$PROJECT_ID/postgres', '.']
+  id: A
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['tag', 'gcr.io/$PROJECT_ID/postgres','gcr.io/$PROJECT_ID/postgres:__PG_MAJOR__.__PG_MINOR__' ]
+  waitFor:
+  - A
 
 images: ['gcr.io/$PROJECT_ID/postgres:__PG_MAJOR__.__PG_MINOR__']
