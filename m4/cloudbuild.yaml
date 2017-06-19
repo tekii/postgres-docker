@@ -6,5 +6,4 @@ steps:
   args: ['tag', 'gcr.io/$PROJECT_ID/postgres','gcr.io/$PROJECT_ID/postgres:__PG_MAJOR__.__PG_MINOR__' ]
   waitFor:
   - A
-
-images: ['gcr.io/$PROJECT_ID/postgres:__PG_MAJOR__.__PG_MINOR__']
+images: ['gcr.io/$PROJECT_ID/postgres']

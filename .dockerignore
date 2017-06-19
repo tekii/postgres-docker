@@ -8,3 +8,4 @@ Dockerfile.m4
 *.yaml
 original
 volume*
+m4*

@@ -37,7 +37,7 @@ update-patch:
 	diff -ruN original/ $(POSTGRES_ROOT)/  > config.patch; [ $$? -eq 1 ]
 
 PHONY += image
-image: Dockerfile #$(POSTGRES_ROOT)
+image: Dockerfile cloudbuild.yaml #$(POSTGRES_ROOT)
 	docker build --no-cache=false --rm=true --tag=$(DOCKER_TAG) .
 
 
