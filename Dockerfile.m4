@@ -1,7 +1,7 @@
 #
 # postgres Dockerfile
 #
-FROM launcher.gcr.io/google/debian8:latest
+FROM launcher.gcr.io/google/debian9:latest
 
 MAINTAINER Pablo Jorge Eduardo Rodriguez <pr@tekii.com.ar>
 
@@ -11,15 +11,15 @@ LABEL version="__PG_MAJOR__.__PG_MINOR__"
 #
 # from https://github.com/docker-library/postgres -> make the
 # "en_US.UTF-8" locale so postgres will be utf-8 enabled by default
-RUN echo "deb http://gce_debian_mirror.storage.googleapis.com __DISTRO__-backports main" \
-    >  /etc/apt/sources.list.d/backports.list && \
+RUN apt-get update && \
+    apt-get dist-upgrade --assume-yes && \
+    apt-get install -y --no-install-recommends locales gnupg2 dirmngr && \
     echo "deb http://apt.postgresql.org/pub/repos/apt/ __DISTRO__-pgdg main" \
     > /etc/apt/sources.list.d/pgdg.list && \
     apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 \
     --recv-keys B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8 && \
     apt-get update && \
-    apt-get dist-upgrade --assume-yes && \
-    apt-get --target-release __DISTRO__-backports install -y --no-install-recommends locales && \
+    apt-get purge --assume-yes gnupg2 dirmngr && \
     rm -rf /var/lib/apt/lists/* && \
     localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 

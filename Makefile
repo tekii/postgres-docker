@@ -1,7 +1,7 @@
 ##
 ## POSTGRES
 ##
-DISTRO:=jessie
+DISTRO:=stretch
 PG_MAJOR:=9
 PG_MINOR:=3
 PG_DATA:=/var/lib/postgresql/$(PG_MAJOR).$(PG_MINOR)/main
@@ -57,11 +57,11 @@ push-to-google: image
 
 PHONY += git-tag git-push
 git-tag:
-	-git tag -d $(PG_MAJOR).$(PG_MINOR)
-	git tag $(PG_MAJOR).$(PG_MINOR)
+	-git tag -d $(DISTRO)-$(PG_MAJOR).$(PG_MINOR)
+	git tag $(DISTRO)-$(PG_MAJOR).$(PG_MINOR)
 
 git-push:
-	-git push origin :refs/tags/$(PG_MAJOR).$(PG_MINOR)
+	-git push origin :refs/tags/$(DISTRO)-$(PG_MAJOR).$(PG_MINOR)
 	git push origin
 	git push --tags origin
 
