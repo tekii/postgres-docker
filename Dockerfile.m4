@@ -63,7 +63,7 @@ RUN chmod 555 /opt/docker-entrypoint.sh
 #    chmod -R 400 __SECRETS__/*
 
 # Kubernetes secret place-holder
-VOLUME __SECRETS__
+# VOLUME __SECRETS__
 # Postgres data volume place-holder
 VOLUME __PG_HOME__
 

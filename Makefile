@@ -44,7 +44,8 @@ image: Dockerfile cloudbuild.yaml #$(POSTGRES_ROOT)
 
 PHONY+= run
 run: #image
-	docker run --rm -it -p $(PG_PORT):$(PG_PORT) -v $(shell pwd)/volume:$(PG_HOME) -v $(shell pwd)/secrets:$(SECRETS) $(DOCKER_TAG) /bin/bash
+	docker run --rm -it -p $(PG_PORT):$(PG_PORT) -v $(shell pwd)/volume:$(PG_HOME) -v $(shell pwd)/secrets:$(SECRETS) \
+	-e "DB_DATABASE=testdb" -e "DB_USERNAME=jiradbuser" -e "DB_PASSWORD=testpassword" $(DOCKER_TAG) /bin/bash
 
 PHONY+= push-to-docker
 push-to-docker: image
@@ -57,11 +58,11 @@ push-to-google: image
 
 PHONY += git-tag git-push
 git-tag:
-	-git tag -d $(PG_MAJOR).$(PG_MINOR)
-	git tag $(PG_MAJOR).$(PG_MINOR)
+	-git tag -d $(DISTRO)-$(PG_MAJOR).$(PG_MINOR)
+	git tag $(DISTRO)-$(PG_MAJOR).$(PG_MINOR)
 
 git-push:
-	-git push origin :refs/tags/$(PG_MAJOR).$(PG_MINOR)
+	-git push origin :refs/tags/$(DISTRO)-$(PG_MAJOR).$(PG_MINOR)
 	git push origin
 	git push --tags origin
 
